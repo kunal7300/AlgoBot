@@ -7,17 +7,18 @@ import { OAuth2Client } from "google-auth-library";
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000; // ✅ Use Render's port
 
-
+// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static("public")); // Serve frontend files if any
 
+// ✅ Gemini AI Setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const client = new OAuth2Client(); // Google OAuth client
 
-// Google Login route
+// ✅ Google Login route
 app.post("/auth/google", async (req, res) => {
     const { credential } = req.body;
     try {
@@ -34,7 +35,7 @@ app.post("/auth/google", async (req, res) => {
     }
 });
 
-// Chat route
+// ✅ Chat Route
 app.post("/chat", async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -48,7 +49,14 @@ app.post("/chat", async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`✅ Server running at http://localhost:${port}`);
+// ✅ Catch-all for SPA (optional)
+app.get("*", (req, res) => {
+    res.sendFile(process.cwd() + "/public/index.html");
 });
+
+// ✅ Start Server
+app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+});
+
 
