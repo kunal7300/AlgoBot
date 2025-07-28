@@ -19,4 +19,3 @@ Authentication: Google OAuth2
 
 Hosting: OnRender
 
-link: https://algobot-3va3.onrender.com/
