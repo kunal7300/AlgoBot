@@ -39,24 +39,16 @@ app.post("/auth/google", async (req, res) => {
 app.post("/chat", async (req, res) => {
     try {
         const userQuestion = req.body.prompt;
-        if (!userQuestion) {
-            return res.status(400).json({ error: "Prompt is required" });
-        }
 
-        // ✅ Add formatting instructions for Gemini
+        // Add formatting instructions for Gemini
         const instruction = `You are a DSA (Data Structures & Algorithms) assistant.
 You must ONLY answer questions related to DSA topics.
-Format all responses in clean, readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li>, etc.).
-Always provide:
-- Clear headings (<h3>)
-- Numbered or bullet points
-- Properly formatted code blocks
-- Examples and complexities when relevant.`;
+Format all responses in clean, readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li> etc.)`;
 
         // ✅ Combine instructions with user input
         const formattedPrompt = `${instruction}\n\nUser Question: ${userQuestion}`;
 
-        // ✅ Generate response
+        // ✅ Call Gemini Model
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(formattedPrompt);
         const response = await result.response.text();
@@ -67,6 +59,7 @@ Always provide:
         res.status(500).json({ error: "Server Error" });
     }
 });
+
 
 // ✅ Catch-all for SPA (optional)
 app.get("*", (req, res) => {
