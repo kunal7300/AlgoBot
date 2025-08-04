@@ -1,65 +1,268 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlgoBot</title>
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+      <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-
-    <!-- ✅ Google Identity -->
+    <!-- Google Identity -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
 
     <style>
-      /* ✅ Your CSS is unchanged */
-      body{margin:0;font-family:"Segoe UI",sans-serif;background:linear-gradient(135deg,#ef4848,#e265b6);color:#fff;display:flex;height:100vh;overflow:hidden;transition:background .3s ease}
-      .sidebar{width:60px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border-right:1px solid rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:15px}
-      .sidebar button{background:none;border:none;font-size:22px;color:white;cursor:pointer;transition:transform .2s}
-      .sidebar button:hover{transform:scale(1.2)}
-      .main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:auto}
-      .welcome{text-align:center;margin-bottom:20px}
-      .welcome h1{font-size:32px;font-weight:700;background:linear-gradient(90deg,#fff,#ddd);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-      .welcome p{color:#eee}
-      .cards{display:flex;gap:15px;margin-bottom:30px;flex-wrap:wrap;justify-content:center}
-      .card{background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:15px 20px;border-radius:12px;color:white;cursor:pointer;width:180px;text-align:center;transition:all .3s ease;box-shadow:0 3px 10px rgba(0,0,0,.2)}
-      .card:hover{transform:translateY(-3px) scale(1.05);background:rgba(255,255,255,.25)}
-      .tabs{display:flex;gap:15px;margin-bottom:20px}
-      .tabs button{border:none;background:transparent;font-weight:600;color:#fff;font-size:16px;cursor:pointer;transition:color .3s ease}
-      .tabs button.active,.tabs button:hover{color:#fefbfb;text-decoration:underline}
-      .chat-container{width:100%;max-width:700px;height:350px;background:rgba(255,255,255,.851);backdrop-filter:blur(8px);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.3)}
-      .centered-box{display:flex;justify-content:center;align-items:center;background:rgba(255,255,255,.7);color:#222;border-radius:10px;padding:18px 0;margin:18px auto;width:80%;font-weight:bold;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-      .chat-box{flex:1;padding:15px;overflow-y:auto}
-      .message{margin:8px 0;font-size:15px}
-      .user{text-align:right;color:#080808}
-      .bot{text-align:left;color:#141111}
-      .input-area{display:flex;border-top:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
-      .input-area input{flex:1;padding:12px;border:none;font-size:1rem;background:transparent;color:rgb(22,20,21);outline:none}
-      .input-area input:focus{box-shadow:inset 0 -2px 0 #fff}
-      .input-area button{background:#ebe1e7;color:#333;border:none;padding:12px 20px;cursor:pointer;font-weight:bold;transition:background .3s ease}
-      .input-area button:hover{background:#fffffff6}
-      #login{text-align:center;width:100%;margin-top:20%}
-      .hidden{display:none}
-      .spinner::after{content:"⏳ Loading...";animation:pulse 1s infinite}
-      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #ef4848, #e265b6);
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 15px;
+        }
+
+        .sidebar button {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .sidebar button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Main area */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff, #ddd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome p {
+            color: #eee;
+        }
+
+        /* Cards */
+        .cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            width: 180px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .tabs button.active,
+        .tabs button:hover {
+            color: #fefbfb;
+            text-decoration: underline;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            width: 100%;
+            max-width: 700px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.851);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .centered-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            color: #222;
+            border-radius: 10px;
+            padding: 18px 0;
+            margin: 18px auto;
+            width: 80%;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .user {
+            text-align: right;
+            color: #080808;
+        }
+
+        .bot {
+            text-align: left;
+            color: #141111;
+        }
+
+        /* Input area with glow */
+        .input-area {
+            display: flex;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            font-size: 1rem;
+            background: transparent;
+            color: rgb(22, 20, 21);
+            outline: none;
+        }
+
+        .input-area input:focus {
+            box-shadow: inset 0 -2px 0 #fff;
+        }
+
+        .input-area button {
+            background: #ebe1e7;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .input-area button:hover {
+            background: #fffffff6;
+        }
+
+        /* Login Section */
+        #login {
+            text-align: center;
+            width: 100%;
+            margin-top: 20%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner::after {
+            content: "⏳ Loading...";
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.5
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- ✅ Login -->
+    <!-- <div class="sidebar">
+        <button>➕</button>
+        <button>📂</button>
+        <button>⚙️</button>
+    </div> -->
+
+    <!-- Login Section -->
     <div id="login">
-        <h1>Welcome to AlgoBot</h1>
-        <div id="g_id_onload"
-             data-client_id="1027137747819-ir5hgbe3tm2c65vn0c50nto14ga4f1qm.apps.googleusercontent.com"
-             data-callback="onSignIn">
+        <h2>Welcome to AlgoBot</h2>
+        <div id="g_id_onload" data-client_id="1027137747819-ir5hgbe3tm2c65vn0c50nto14ga4f1qm.apps.googleusercontent.com"
+            data-callback="onSignIn">
         </div>
         <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <!-- ✅ Chat UI -->
+    <!-- Chat UI -->
     <div class="main hidden" id="chat-ui">
         <div class="welcome">
             <h1>Hi there, <span id="username">User</span> 👋</h1>
@@ -69,48 +272,40 @@
         <div class="cards">
             <div class="card">DSA CHATS ONLY</div>
             <div class="card">DETAIL ANS</div>
+            <!-- <div class="card"></div> -->
         </div>
+
+        <!-- <div class="tabs">
+            <button class="active">General</button>
+            <button>Text</button>
+            <button>Media</button>
+            <button>Music</button>
+        </div> -->
 
         <div class="chat-container">
             <div class="chat-box" id="chat-box">
-                <div class="message bot"> AlgoBot: Ready to help you with algorithms!</div>
+                <div class="message bot">AlgoBot: Ready to help you with algorithms!</div>
             </div>
             <div class="input-area">
                 <input type="text" id="user-input" placeholder="Ask me anything..." />
-                <button id="send-btn">Send</button>
+                <button onclick="sendMessage()">Send</button>
             </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
         const chatBox = document.getElementById("chat-box");
         const userInput = document.getElementById("user-input");
-        const sendBtn = document.getElementById("send-btn");
 
-        // ✅ Google Login Callback
-        window.onSignIn = (response) => {
-            try {
-                const userData = jwt_decode(response.credential);
-                document.getElementById("username").textContent = userData.name || "User";
-                document.getElementById("login").classList.add("hidden");
-                document.getElementById("chat-ui").classList.remove("hidden");
-            } catch (err) {
-                console.error("Login decode error:", err);
-                alert("Login failed. Try again.");
-            }
-        };
-
-        // ✅ Append Chat Message
-        function appendMessage(message, sender) {
-            const div = document.createElement("div");
-            div.className = `message ${sender}`;
-            div.innerHTML = sender === "user" ? `You: ${message}` : `<b>AlgoBot:</b><br>${message}`;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        // Google Login
+        function onSignIn(response) {
+            const userData = jwt_decode(response.credential);
+            document.getElementById("username").textContent = userData.name;
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("chat-ui").classList.remove("hidden");
         }
 
-        // ✅ Send Message
+        // Chat Send
         async function sendMessage() {
             const input = userInput.value.trim();
             if (!input) return;
@@ -124,7 +319,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const res = await fetch("https://algbot-3va3.onrender.com/chat", {
+                const res = await fetch("https://algobot-3va3.onrender.com/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ prompt: input }),
@@ -132,25 +327,27 @@
 
                 const data = await res.json();
                 spinner.remove();
-
-                const cleanReply = (data.reply || "⚠️ No response")
-                    .replace(/```[a-z]*\n?/gi, "")
-                    .replace(/```/g, "");
-
-                appendMessage(cleanReply, "bot");
+                appendMessage(data.reply, "bot");
             } catch (err) {
                 spinner.remove();
                 appendMessage("⚠️ Server error. Try again later.", "bot");
-                console.error("Fetch error:", err);
             }
         }
 
-        // ✅ Event Listeners
-        sendBtn.addEventListener("click", sendMessage);
-        userInput.addEventListener("keydown", (e) => { if (e.key === "Enter") sendMessage(); });
-    });
+        function appendMessage(message, sender) {
+            const div = document.createElement("div");
+            div.className = message ${sender};
+            div.textContent = (sender === "user" ? " You: " : "AlgoBot: ") + message;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        userInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") sendMessage();
+        });
     </script>
 </body>
-</html>
+
+</html> 
 
 
