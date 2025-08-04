@@ -335,12 +335,20 @@
         }
 
         function appendMessage(message, sender) {
-            const div = document.createElement("div");
-            div.className = message ${sender};
-            div.textContent = (sender === "user" ? " You: " : "AlgoBot: ") + message;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+    const div = document.createElement("div");
+    div.className = `message ${sender}`;
+    
+    if (sender === "user") {
+        div.textContent = "You: " + message;
+    } else {
+        // ✅ Allow formatted HTML from backend
+        div.innerHTML = `<b>AlgoBot:</b><br>${message}`;
+    }
+    
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 
         userInput.addEventListener("keydown", e => {
             if (e.key === "Enter") sendMessage();
