@@ -41,13 +41,16 @@ app.post("/chat", async (req, res) => {
         const userQuestion = req.body.prompt;
 
         // Add formatting instructions for Gemini
-        const formattedPrompt = `
-You are AlgoBot, an expert in Data Structures & Algorithms.
-Always answer in a **clean and structured Markdown** format with:
-- Clear headings (### Heading)
-- Numbered or bullet points
-- Properly formatted code blocks using triple backticks
-- Examples and complexities when relevant
+     const instruction = `You are a DSA (Data Structures & Algorithms) assistant.
+You must ONLY answer questions related to DSA topics.
+Format all responses in clean, readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li> etc.)`;
+
+
+// Always answer in a **clean and structured Markdown** format with:
+// - Clear headings (### Heading)
+// - Numbered or bullet points
+// - Properly formatted code blocks using triple backticks
+// - Examples and complexities when relevant
 
 Question: ${userQuestion}
         `;
