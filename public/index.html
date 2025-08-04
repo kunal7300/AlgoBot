@@ -255,7 +255,7 @@
 
     <!-- Login Section -->
     <div id="login">
-        <h2>Welcome to AlgoBot</h2>
+        <h1>Welcome to AlgoBot</h1>
         <div id="g_id_onload" data-client_id="1027137747819-ir5hgbe3tm2c65vn0c50nto14ga4f1qm.apps.googleusercontent.com"
             data-callback="onSignIn">
         </div>
@@ -284,7 +284,7 @@
 
         <div class="chat-container">
             <div class="chat-box" id="chat-box">
-                <div class="message bot">AlgoBot: Ready to help you with algorithms!</div>
+                <div class="message bot"> AlgoBot: Ready to help you with algorithms!</div>
             </div>
             <div class="input-area">
                 <input type="text" id="user-input" placeholder="Ask me anything..." />
@@ -305,46 +305,53 @@
             document.getElementById("chat-ui").classList.remove("hidden");
         }
 
-        // Chat Send
-        async function sendMessage() {
-            const input = userInput.value.trim();
-            if (!input) return;
 
-            appendMessage(input, "user");
-            userInput.value = "";
+      // Chat Send
+async function sendMessage() {
+    const input = userInput.value.trim();
+    if (!input) return;
 
-            const spinner = document.createElement("div");
-            spinner.className = "spinner";
-            chatBox.appendChild(spinner);
-            chatBox.scrollTop = chatBox.scrollHeight;
+    appendMessage(input, "user");
+    userInput.value = "";
 
-            try {
-                const res = await fetch("https://algobot-3va3.onrender.com/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: input }),
-                });
+    const spinner = document.createElement("div");
+    spinner.className = "spinner";
+    chatBox.appendChild(spinner);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-                const data = await res.json();
-                spinner.remove();
-                appendMessage(data.reply, "bot");
-            } catch (err) {
-                spinner.remove();
-                appendMessage("⚠️ Server error. Try again later.", "bot");
-            }
-        }
+    try {
+        const res = await fetch("https://algbot-3va3.onrender.com/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: input }),
+        });
 
-       function appendMessage(message, sender) {
+        const data = await res.json();
+        spinner.remove();
+
+        // ✅ Clean Markdown (remove ```html and ``` )
+        const cleanReply = data.reply
+            .replace(/```[a-z]*\n?/gi, "")  // remove opening backticks with language
+            .replace(/```/g, "");          // remove closing backticks
+
+        appendMessage(cleanReply, "bot");
+    } catch (err) {
+        spinner.remove();
+        appendMessage("⚠️ Server error. Try again later.", "bot");
+    }
+}
+
+function appendMessage(message, sender) {
     const div = document.createElement("div");
     div.className = `message ${sender}`;
-    
+
     if (sender === "user") {
         div.textContent = "You: " + message;
     } else {
-        // ✅ Allow formatted HTML from backend
+        // ✅ Allow formatted HTML from backend (already cleaned)
         div.innerHTML = `<b>AlgoBot:</b><br>${message}`;
     }
-    
+
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
