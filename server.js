@@ -51,10 +51,6 @@ Format all responses in clean, readable HTML (use <h3>, <p>, <pre><code>, <ul>, 
 // - Numbered or bullet points
 // - Properly formatted code blocks using triple backticks
 // - Examples and complexities when relevant
-
-Question: ${userQuestion}
-        `;
-
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(formattedPrompt);
         const response = await result.response.text();
