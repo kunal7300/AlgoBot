@@ -38,16 +38,24 @@ app.post("/auth/google", async (req, res) => {
 // ✅ Chat Route
 app.post("/chat", async (req, res) => {
     try {
-     const userPrompt = req.body.prompt;
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const userQuestion = req.body.prompt;
 
-// Add system-level instruction
-const instruction = `You are a DSA (Data Structures & Algorithms) assistant.
-You must ONLY answer questions related to DSA topics like arrays, linked lists, trees, algorithms, complexity, etc.
-If a question is unrelated to DSA, respond with: "I only answer questions related to Data Structures and Algorithms."`;
+        // Add formatting instructions for Gemini
+        const formattedPrompt = `
+You are AlgoBot, an expert in Data Structures & Algorithms.
+Always answer in a **clean and structured Markdown** format with:
+- Clear headings (### Heading)
+- Numbered or bullet points
+- Properly formatted code blocks using triple backticks
+- Examples and complexities when relevant
 
-const result = await model.generateContent(`${instruction}\n\nUser: ${userPrompt}`);
+Question: ${userQuestion}
+        `;
+
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await model.generateContent(formattedPrompt);
         const response = await result.response.text();
+
         res.json({ reply: response });
     } catch (error) {
         console.error("❌ Server Error:", error);
