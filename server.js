@@ -35,33 +35,45 @@ app.post("/auth/google", async (req, res) => {
     }
 });
 
+
 // ✅ Chat Route
 app.post("/chat", async (req, res) => {
   try {
     const userQuestion = req.body.prompt;
 
-    // Combine instruction + user question
-    const formattedPrompt = `
-You are a DSA (Data Structures & Algorithms) assistant.
-You must ONLY answer questions related to DSA topics like arrays, linked lists, trees, algorithms, complexity, etc.
-If a question is unrelated, say: "I only answer DSA-related questions."
-Format all responses in readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li> etc.).
+    if (!userQuestion || userQuestion.trim() === "") {
+      return res.status(400).json({ reply: "Please enter a question." });
+    }
 
-User: ${userQuestion}
-`;
+    const instruction = `
+You are AlgoBot — a DSA (Data Structures and Algorithms) expert.
+You must ONLY answer questions related to DSA (arrays, linked lists, trees, graphs, algorithms, time complexity, etc.).
+If the question is unrelated, respond with:
+"I only answer questions related to Data Structures and Algorithms."
 
-    // Generate the response
+Format your reply in **clean HTML**, using:
+- <h3> for titles
+- <p> for paragraphs
+- <pre><code> for code blocks
+- <ul><li> for lists
+    `;
+
+    const formattedPrompt = `${instruction}\n\nUser: ${userQuestion}\nAlgoBot:`;
+
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(formattedPrompt);
-    const responseText = await result.response.text();
 
-    // Send back AI reply
-    res.json({ reply: responseText });
+    // ✅ Safely extract text
+    const response = result?.response?.text ? await result.response.text() : "⚠️ No response received from AI.";
+
+    console.log("✅ Gemini response:", response);
+    res.json({ reply: response });
   } catch (error) {
-    console.error("❌ Server Error:", error);
-    res.status(500).json({ error: "Server Error" });
+    console.error("❌ Chat Route Error:", error);
+    res.status(500).json({ reply: "⚠️ Server Error — please try again later." });
   }
 });
+
 
 
 // ✅ Catch-all for SPA (optional)
