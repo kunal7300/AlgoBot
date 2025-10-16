@@ -60,7 +60,8 @@ Format your reply in **clean HTML**, using:
 
     const formattedPrompt = `${instruction}\n\nUser: ${userQuestion}\nAlgoBot:`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+
     const result = await model.generateContent(formattedPrompt);
 
     // ✅ Safely extract text
