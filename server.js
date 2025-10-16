@@ -37,27 +37,30 @@ app.post("/auth/google", async (req, res) => {
 
 // ✅ Chat Route
 app.post("/chat", async (req, res) => {
-    try {
-        const userQuestion = req.body.prompt;
+  try {
+    const userQuestion = req.body.prompt;
 
-        // Add formatting instructions for Gemini
-        const instruction = `You are a DSA (Data Structures & Algorithms) assistant.
-You must ONLY answer questions related to DSA topics.
-Format all responses in clean, readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li> etc.)`;
+    // Combine instruction + user question
+    const formattedPrompt = `
+You are a DSA (Data Structures & Algorithms) assistant.
+You must ONLY answer questions related to DSA topics like arrays, linked lists, trees, algorithms, complexity, etc.
+If a question is unrelated, say: "I only answer DSA-related questions."
+Format all responses in readable HTML (use <h3>, <p>, <pre><code>, <ul>, <li> etc.).
 
-        // ✅ Combine instructions with user input
-        const formattedPrompt = `${instruction}\n\nUser Question: ${userQuestion}`;
+User: ${userQuestion}
+`;
 
-        // ✅ Call Gemini Model
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const result = await model.generateContent(formattedPrompt);
-        const response = await result.response.text();
+    // Generate the response
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(formattedPrompt);
+    const responseText = await result.response.text();
 
-        res.json({ reply: response });
-    } catch (error) {
-        console.error("❌ Server Error:", error);
-        res.status(500).json({ error: "Server Error" });
-    }
+    // Send back AI reply
+    res.json({ reply: responseText });
+  } catch (error) {
+    console.error("❌ Server Error:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
 });
 
 
